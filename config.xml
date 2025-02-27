@@ -1,0 +1,8 @@
+<variables>
+    <xmin>1.5</xmin>
+    <xmax>20.5</xmax>
+    <a>10</a>
+    <b>2</b>
+    <c>4</c>
+    <step>0.1</step>
+</variables>
