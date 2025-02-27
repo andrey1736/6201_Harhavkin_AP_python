@@ -16,14 +16,14 @@ for elem in root.findall('a'):
 for elem in root.findall('b'):
     b = float(elem.text)
 for elem in root.findall('c'):
-    c = float(elem.text) 
+    c = float(elem.text)
 
 file = open('results.txt', 'w')
 masX = np.arange(xmin, xmax, step)
 masY = (((np.sin(a*masX)*np.cos(b*masX)))/(np.sin(masX)+np.cos(masX)))+c
 for y in masY:
-    file.write(str(y)+ "\n")
+    file.write(str(y) + "\n")
 file.close()
 
-plt.plot(masX,masY)
+plt.plot(masX, masY, markersize=2, marker='.')
 plt.show()
