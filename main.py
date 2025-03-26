@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from io import BytesIO
 
+
 def getImageFromJson(resp):
     image_url = resp[0]['url']
     r = requests.get(image_url).content
@@ -43,7 +44,6 @@ def imageHGistogram(image):
 def imageProcessing(imageNp, mask):
     imageNew = np.zeros((imageNp.shape[0]+2, imageNp.shape[1]+2, imageNp.shape[2]), dtype=np.uint8)
     imageNew[1:-1, 1:-1, :] = imageNp[:, :, :]
-    
     step = (imageNew.shape[0]-3) // 9
     stepI = 1
 
@@ -52,7 +52,7 @@ def imageProcessing(imageNp, mask):
             stepI += 1
         for x in range(1, imageNew.shape[1]-1):
             for i in range(imageNew.shape[2]):
-                    imageNew[y, x, i] = np.sum(imageNew[y-1:y+2, x-1:x+2, i] * mask)
+                imageNew[y, x, i] = np.sum(imageNew[y-1:y+2, x-1:x+2, i] * mask)
     image = np.zeros((imageNp.shape[0], imageNp.shape[1], imageNp.shape[2]), dtype=np.uint8)
     image[:, :, :] = imageNew[1:-1, 1:-1, :]
     return image
@@ -64,10 +64,12 @@ def imageProcessingScipy(imageNp, mask):
         imageNew[:, :, color] = signal.convolve2d(imageNp[:, :, color], mask, mode='same', boundary='wrap')
     return imageNew
 
+
 mask = np.array([[1/16, 1/8, 1/16], [1/8, 1/4, 1/8], [1/16, 1/8, 1/16]])
-   
+
+
 def getRequests():
-    
+
     API_KEY = os.getenv('API_KEY')
     IMAGE_SIZE = os.getenv('IMAGE_SIZE')
     payload = {'limit': '1', 'has_breeds': '1', 'size': IMAGE_SIZE, 'api_key': API_KEY}
