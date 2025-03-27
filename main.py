@@ -19,28 +19,6 @@ def getNameFromJson(resp):
     return name
 
 
-def imageHGistogram(image):
-    min_red = np.min(image[:, :, 0])
-    max_red = np.max(image[:, :, 0])
-    min_green = np.min(image[:, :, 1])
-    max_green = np.max(image[:, :, 1])
-    min_blue = np.min(image[:, :, 2])
-    max_blue = np.max(image[:, :, 2])
-
-    k_red = 255 / (max_red - min_red)
-    k_green = 255 / (max_green - min_green)
-    k_blue = 255 / (max_blue - min_blue)
-
-    b_red = 0 - (k_red * min_red)
-    b_green = 0 - (k_red * min_red)
-    b_blue = 0 - (k_red * min_red)
-
-    image[:, :, 0] = k_red * image[:, :, 0] + b_red
-    image[:, :, 1] = k_green * image[:, :, 1] + b_green
-    image[:, :, 2] = k_blue * image[:, :, 2] + b_blue
-    return image
-
-
 def imageProcessing(imageNp, mask):
     imageNew = np.zeros((imageNp.shape[0]+2, imageNp.shape[1]+2, imageNp.shape[2]), dtype=np.uint8)
     imageNew[1:-1, 1:-1, :] = imageNp[:, :, :]
@@ -97,7 +75,7 @@ img_np = np.array(image, dtype=np.uint8)
 print("size image:", img_np.shape[0], ", ", img_np.shape[1])
 
 print("Scipy procesing start:")
-img_np_new_scipy = imageHGistogram(imageProcessingScipy(img_np, mask))
+img_np_new_scipy = imageProcessingScipy(img_np, mask)
 imageNewScipy = Image.fromarray(img_np_new_scipy.astype('uint8'), 'RGB')
 imageNewScipy.save(PACKAGE_IMAGE + name_cat + "_scipy_0.jpg")
 
