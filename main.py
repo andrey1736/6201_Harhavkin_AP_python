@@ -22,12 +22,7 @@ def getNameFromJson(resp):
 def imageProcessing(imageNp, mask):
     imageNew = np.zeros((imageNp.shape[0]+2, imageNp.shape[1]+2, imageNp.shape[2]), dtype=np.uint8)
     imageNew[1:-1, 1:-1, :] = imageNp[:, :, :]
-    step = (imageNew.shape[0]-3) // 9
-    stepI = 1
-
     for y in range(1, imageNew.shape[0]-1):
-        if (y > step * stepI):
-            stepI += 1
         for x in range(1, imageNew.shape[1]-1):
             for i in range(imageNew.shape[2]):
                 imageNew[y, x, i] = np.sum(imageNew[y-1:y+2, x-1:x+2, i] * mask)
@@ -43,45 +38,38 @@ def imageProcessingScipy(imageNp, mask):
     return imageNew
 
 
-mask = np.array([[1/16, 1/8, 1/16], [1/8, 1/4, 1/8], [1/16, 1/8, 1/16]])
-
-
-def getRequests():
-
-    API_KEY = os.getenv('API_KEY')
-    IMAGE_SIZE = os.getenv('IMAGE_SIZE')
-    payload = {'limit': '1', 'has_breeds': '1', 'size': IMAGE_SIZE, 'api_key': API_KEY}
-    url = os.getenv('URL')
-    r = requests.get(url, payload)
-    if r.status_code != 200:
-        print("Error download image: " + str(r.status_code))
-    return r
-
-
 load_dotenv()
 PACKAGE_IMAGE = os.getenv('PACKAGE_IMAGE')
+API_KEY = os.getenv('API_KEY')
+IMAGE_SIZE = os.getenv('IMAGE_SIZE')
+payload = {'limit': '1', 'has_breeds': '1', 'size': IMAGE_SIZE, 'api_key': API_KEY}
+url = os.getenv('URL')
+r = requests.get(url, payload)
+if r.status_code != 200:
+    print("Error download image: " + str(r.status_code))
 
-r = getRequests()
+
 resp = r.json()
-r_text = r.text
 
 name_cat = getNameFromJson(resp)
 print(name_cat)
 
 image = getImageFromJson(resp)
-image.save(PACKAGE_IMAGE + name_cat + "_normal.jpg")
+image.save(PACKAGE_IMAGE + name_cat + "_original.jpg")
 
 img_np = np.array(image, dtype=np.uint8)
 print("size image:", img_np.shape[0], ", ", img_np.shape[1])
 
+mask = np.array([[1/16, 1/8, 1/16], [1/8, 1/4, 1/8], [1/16, 1/8, 1/16]])
+
 print("Scipy procesing start:")
 img_np_new_scipy = imageProcessingScipy(img_np, mask)
 imageNewScipy = Image.fromarray(img_np_new_scipy.astype('uint8'), 'RGB')
-imageNewScipy.save(PACKAGE_IMAGE + name_cat + "_scipy_0.jpg")
+imageNewScipy.save(PACKAGE_IMAGE + name_cat + "_scipy.jpg")
 
 print("Manual procesing start:")
 img_np_new = imageProcessing(img_np, mask)
 imageNew = Image.fromarray(img_np_new.astype('uint8'), 'RGB')
-imageNew.save(PACKAGE_IMAGE+name_cat+"_manual_0.jpg")
+imageNew.save(PACKAGE_IMAGE+name_cat+"_manual.jpg")
 
 print("Finish")
