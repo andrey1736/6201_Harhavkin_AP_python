@@ -94,14 +94,13 @@ for obj in ImageProcessor.makelistImageProcessor(resp):
 
     obj.imgOriginalSave(PACKAGE_IMAGE, "_original.jpg")
 
-    
 
     print("Scipy procesing start:")
     img_np_new_scipy = ImageProcessor.imageProcessingScipy(mask, obj.getOriginalNpArray())
    
     obj.NpArraySave(PACKAGE_IMAGE,img_np_new_scipy,"_scipy.jpg")
-
     
+
     print("Manual procesing start:")
     img_np_new = ImageProcessor.imageProcessing(mask,obj.getOriginalNpArray())
     obj.NpArraySave(PACKAGE_IMAGE,img_np_new,"_processed.jpg")
